@@ -1,11 +1,10 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ENHANCED_PRISMA } from '@zenstackhq/server/nestjs';
-import { SignInDto, SignUpDto } from 'src/dtos/auth.dto';
-import { PrismaService } from './prisma.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { messages } from 'src/constants/constants';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { SignInDto, SignUpDto } from 'src/dtos/auth.dto';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +12,7 @@ export class AuthService {
         private readonly prismaService: PrismaService,
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
-    ) { }
+    ) {}
 
     async signUp(data: SignUpDto): Promise<void> {
         await this.prismaService.user.create({

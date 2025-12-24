@@ -1,9 +1,10 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { enhance } from '@zenstackhq/runtime';
 import { ZenStackModule } from '@zenstackhq/server/nestjs';
 import configuration from 'src/configs/configuration';
 import { PrismaService } from 'src/services';
-import { JwtModule } from '@nestjs/jwt';
 
 export default [
     ConfigModule.forRoot({
@@ -11,6 +12,13 @@ export default [
         load: [configuration],
     }),
     JwtModule.register({}),
+    ThrottlerModule.forRoot([
+        {
+            name: 'default',
+            ttl: 60000,
+            limit: 100,
+        },
+    ]),
     ZenStackModule.registerAsync({
         useFactory: (prisma: PrismaService) => {
             return {
