@@ -5,13 +5,14 @@ import type { Request, Response } from 'express';
 import { SignInDto, SignUpDto } from 'src/dtos/auth.dto';
 import { AuthService } from 'src/services';
 import { handleRequest } from 'src/utils/api-helper';
+import { ms } from 'src/utils/time-helper';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly configService: ConfigService,
         private readonly authService: AuthService,
-    ) {}
+    ) { }
 
     @Post('signup')
     async signup(@Body() body: SignUpDto) {
@@ -32,7 +33,7 @@ export class AuthController {
                     secure: true,
                     sameSite: 'none',
                     path: '/',
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    maxAge: ms(this.configService.get('authentication.jwtRefreshExpiresIn') || '7d'),
                 });
 
                 return { accessToken };
@@ -54,7 +55,7 @@ export class AuthController {
                     secure: true,
                     sameSite: 'none',
                     path: '/',
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    maxAge: ms(this.configService.get('authentication.jwtRefreshExpiresIn') || '7d'),
                 });
 
                 return { accessToken: tokens.accessToken };
